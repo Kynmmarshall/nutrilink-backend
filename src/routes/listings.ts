@@ -20,7 +20,7 @@ router.get(
   '/',
   validateQuery(listQuerySchema),
   asyncHandler(async (req, res) => {
-    const { status, category, search, take } = req.query as z.infer<typeof listQuerySchema>;
+    const { status, category, search, take } = listQuerySchema.parse(req.query);
 
     const listings = await prisma.listing.findMany({
       where: {
@@ -37,7 +37,7 @@ router.get(
       take,
       include: {
         provider: {
-          select: { id: true, fullName: true, organization: true },
+          select: { id: true, fullName: true },
         },
       },
     });

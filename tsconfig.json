@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "ESNext",
+    "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "outDir": "dist",
     "rootDir": "src",
@@ -11,8 +11,8 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "resolveJsonModule": true,
-    "types": ["node"]
+    "typeRoots": ["./node_modules/@types"]
   },
-  "include": ["src", "prisma/seed.ts", "src/types"],
+  "include": ["src", "src/types"],
   "exclude": ["node_modules", "dist"]
 }
