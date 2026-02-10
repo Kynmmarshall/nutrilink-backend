@@ -1,0 +1,115 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String            @id @default(uuid()) @db.Uuid
+  fullName        String            @map("full_name")
+  email           String            @unique @db.Citext
+  phone           String?           @db.VarChar(32)
+  address         String?
+  role            String            @db.VarChar(24)
+  locale          String            @default("en") @db.VarChar(5)
+  passwordHash    String            @map("password_hash")
+  radiusKm        Int?              @default(10) @map("radius_km")
+  status          String            @db.VarChar(16)
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+  providerProfile ProviderProfile?
+  listings        Listing[]         @relation("ListingProvider")
+  requests        Request[]         @relation("RequestBeneficiary")
+  deliveries      Delivery[]        @relation("DeliveryAgent")
+  notifications   Notification[]
+
+  @@map("users")
+}
+
+model ProviderProfile {
+  userId        String   @id @map("user_id") @db.Uuid
+  organization  String?  @db.VarChar(120)
+  bio           String?
+  totalServings Int      @default(0) @map("total_servings")
+  impactNotes   String?  @map("impact_notes")
+  updatedAt     DateTime @default(now()) @map("updated_at")
+  user          User     @relation(fields: [userId], references: [id])
+
+  @@map("provider_profiles")
+}
+
+model Listing {
+  id            String    @id @default(uuid()) @db.Uuid
+  providerId    String    @map("provider_id") @db.Uuid
+  title         String
+  description   String?
+  category      String    @db.VarChar(32)
+  foodType      String    @map("food_type") @db.VarChar(32)
+  servingsTotal Int       @map("servings_total")
+  servingsLeft  Int       @map("servings_left")
+  expiryAt      DateTime  @map("expiry_at")
+  status        String    @default("available") @db.VarChar(24)
+  address       String
+  latitude      Decimal?  @db.Decimal(9, 6)
+  longitude     Decimal?  @db.Decimal(9, 6)
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  provider      User      @relation("ListingProvider", fields: [providerId], references: [id])
+  requests      Request[]
+
+  @@index([providerId], map: "idx_listings_provider")
+  @@index([status], map: "idx_listings_status")
+  @@map("listings")
+}
+
+model Request {
+  id                 String    @id @default(uuid()) @db.Uuid
+  listingId          String    @map("listing_id") @db.Uuid
+  beneficiaryId      String    @map("beneficiary_id") @db.Uuid
+  requestedServings  Int       @map("requested_servings")
+  notes              String?
+  status             String    @default("pending") @db.VarChar(24)
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+  listing            Listing   @relation(fields: [listingId], references: [id])
+  beneficiary        User      @relation("RequestBeneficiary", fields: [beneficiaryId], references: [id])
+  delivery           Delivery?
+
+  @@index([beneficiaryId], map: "idx_requests_beneficiary")
+  @@index([status], map: "idx_requests_status")
+  @@map("requests")
+}
+
+model Delivery {
+  id              String    @id @default(uuid()) @db.Uuid
+  requestId       String    @unique @map("request_id") @db.Uuid
+  deliveryAgentId String?   @map("delivery_agent_id") @db.Uuid
+  pickupAddress   String    @map("pickup_address")
+  dropoffAddress  String    @map("dropoff_address")
+  status          String    @default("assigned") @db.VarChar(24)
+  pickupAt        DateTime? @map("pickup_at")
+  deliveredAt     DateTime? @map("delivered_at")
+  proofUrl        String?   @map("proof_url")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  request         Request   @relation(fields: [requestId], references: [id])
+  deliveryAgent   User?     @relation("DeliveryAgent", fields: [deliveryAgentId], references: [id])
+
+  @@index([deliveryAgentId], map: "idx_deliveries_agent")
+  @@map("deliveries")
+}
+
+model Notification {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  type      String   @db.VarChar(40)
+  payload   Json
+  readAt    DateTime? @map("read_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("notifications")
+}
