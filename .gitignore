@@ -1,0 +1,6 @@
+node_modules/
+dist/
+.env
+.prisma/
+coverage/
+.DS_Store
