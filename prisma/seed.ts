@@ -6,8 +6,9 @@ const prisma = new PrismaClient();
 
 async function main() {
   const passwordHash = await hashPassword('ChangeMe123!');
+  const guestPasswordHash = await hashPassword('GuestPass123!');
 
-  const [admin, provider, beneficiary, delivery] = await Promise.all([
+  const [admin, provider, guestProvider, beneficiary, delivery] = await Promise.all([
     prisma.user.upsert({
       where: { email: 'admin@nutrilink.com' },
       update: {},
@@ -36,6 +37,21 @@ async function main() {
         phoneNumber: '+1-555-0101',
         latitude: 37.7765,
         longitude: -122.4172,
+      },
+    }),
+    prisma.user.upsert({
+      where: { email: 'guest-provider@nutrilink.com' },
+      update: {},
+      create: {
+        fullName: 'Guest Provider',
+        email: 'guest-provider@nutrilink.com',
+        passwordHash: guestPasswordHash,
+        role: 'provider',
+        status: 'approved',
+        phoneNumber: '+1-555-0999',
+        address: 'Guest Mode',
+        latitude: 37.77,
+        longitude: -122.42,
       },
     }),
     prisma.user.upsert({
@@ -105,6 +121,7 @@ async function main() {
   console.log('Seed data ready:', {
     admin: admin.email,
     provider: provider.email,
+    guestProvider: guestProvider.email,
     beneficiary: beneficiary.email,
     delivery: delivery.email,
   });
