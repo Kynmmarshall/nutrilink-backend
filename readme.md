@@ -16,7 +16,7 @@ Node.js + TypeScript API for the NutriLink food redistribution platform. It powe
 - pnpm/npm/yarn (examples use `npm`)
 
 ## Getting Started
-1. Copy the sample environment file and update secrets:
+1. Copy the sample environment file and update secrets (database URL, JWT secrets, `ADMIN_ACCESS_CODE` that unlocks admin sign-ups):
 	```bash
 	cp .env.example .env
 	# edit DATABASE_URL, JWT secrets, port, etc.
@@ -55,8 +55,9 @@ Node.js + TypeScript API for the NutriLink food redistribution platform. It powe
 - `POST /api/requests` + status transitions for providers/beneficiaries/admins
 - `GET /api/deliveries/tasks/available`, `POST /api/deliveries/:requestId/accept`
 - `GET /api/admin/analytics/summary` for platform metrics
+- `GET /api/users` to power the community map, `PUT /api/users/:id` and `POST /api/users/:id/change-password` for profile management
 
-All protected endpoints expect `Authorization: Bearer <token>` with roles (`provider`, `beneficiary`, `delivery`, `admin`).
+All protected endpoints expect `Authorization: Bearer <token>` with roles (`provider`, `beneficiary`, `delivery`, `admin`). Registration now captures `phoneNumber` plus latitude/longitude to support the community map shown in the Flutter app.
 
 ## Docker (optional)
 Create a `Dockerfile`/`docker-compose.yml` if you want containerized deployment. A typical pattern:

@@ -17,6 +17,10 @@ async function main() {
         passwordHash,
         role: 'admin',
         status: 'approved',
+        phoneNumber: '+1-555-0000',
+        address: 'Global Operations',
+        latitude: 37.7749,
+        longitude: -122.4194,
       },
     }),
     prisma.user.upsert({
@@ -29,6 +33,9 @@ async function main() {
         role: 'provider',
         status: 'approved',
         address: '42 Market Street',
+        phoneNumber: '+1-555-0101',
+        latitude: 37.7765,
+        longitude: -122.4172,
       },
     }),
     prisma.user.upsert({
@@ -40,6 +47,10 @@ async function main() {
         passwordHash,
         role: 'beneficiary',
         status: 'approved',
+        phoneNumber: '+1-555-0102',
+        address: 'Sunset District',
+        latitude: 37.7516,
+        longitude: -122.4477,
       },
     }),
     prisma.user.upsert({
@@ -51,6 +62,10 @@ async function main() {
         passwordHash,
         role: 'delivery',
         status: 'approved',
+        phoneNumber: '+1-555-0103',
+        address: 'Mission District',
+        latitude: 37.7599,
+        longitude: -122.4148,
       },
     }),
   ]);
@@ -69,6 +84,8 @@ async function main() {
       servingsLeft: 30,
       expiryAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
       address: provider.address ?? '42 Market Street',
+      latitude: provider.latitude,
+      longitude: provider.longitude,
     },
   });
 

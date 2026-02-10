@@ -11,13 +11,17 @@ model User {
   id              String            @id @default(uuid()) @db.Uuid
   fullName        String            @map("full_name")
   email           String            @unique @db.Citext
-  phone           String?           @db.VarChar(32)
+  phoneNumber     String?           @map("phone") @db.VarChar(32)
   address         String?
   role            String            @db.VarChar(24)
   locale          String            @default("en") @db.VarChar(5)
   passwordHash    String            @map("password_hash")
   radiusKm        Int?              @default(10) @map("radius_km")
   status          String            @db.VarChar(16)
+  profileImage    String?           @map("profile_image")
+  isActive        Boolean           @default(true) @map("is_active")
+  latitude        Decimal?          @db.Decimal(9, 6)
+  longitude       Decimal?          @db.Decimal(9, 6)
   createdAt       DateTime          @default(now()) @map("created_at")
   updatedAt       DateTime          @updatedAt @map("updated_at")
   providerProfile ProviderProfile?

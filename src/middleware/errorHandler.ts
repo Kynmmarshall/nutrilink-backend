@@ -4,6 +4,7 @@ import { ZodError } from 'zod';
 import { HttpError } from '../utils/httpError.js';
 
 export const errorHandler = (err: unknown, _req: Request, res: Response, _next: NextFunction) => {
+  void _next;
   if (err instanceof ZodError) {
     return res.status(400).json({ message: 'Validation failed', issues: err.flatten() });
   }
